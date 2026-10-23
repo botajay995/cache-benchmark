@@ -3,9 +3,9 @@
 #include <chrono>
 #include <algorithm>
 
-std::vector<int> median(vector<int> nums){
+std::vector<double> median(std::vector<double> nums){
 	sort(nums.begin(),nums.end());
-	int res=nums[nums.size()/2];
+	double res=nums[nums.size()/2];
 	
 	return {nums[0],res,nums[nums.size()-1]};
 }
@@ -61,8 +61,8 @@ int main(int argc, char* argv[]){
 		double col_ms = std::chrono::duration<double, std::milli>(t4-t3).count();
 		col.push_back(col_ms);
 	}
-	std::vector<int> row_val=median(row);
-	std::vector<int> col_val=median(col);
+	std::vector<double> row_val=median(row);
+	std::vector<double> col_val=median(col);
 	
 	std::cout<<"The total sum through the repetitions is: "<<sink<<"\n";
 	std::cout<<"The minimum time, median time,maximum time taken for row major is: "<<"\n";
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]){
 		std::cout<<row_val[i]<<" ";
 	}
 	std::cout<<"\n";
-	std::cout<<"The time taken for column major is: "<<"\n";	
+	std::cout<<"The minimum time,median time,maximum time taken for column major is: "<<"\n";	
 	for(int i=0;i<3;i++){
 		std::cout<<col_val[i]<<" ";
 	}
