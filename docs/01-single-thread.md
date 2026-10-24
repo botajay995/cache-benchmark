@@ -12,3 +12,8 @@
 ##predixtion is that for n=16 the row column will be much faster due to the reason that 15/16 memory location will be accesed from the cache itself
 ##but for the column around 1/16 will be accessed from the cache rather than the memory so it must be much much slower
 
+##result the graph show very accurately depicts how the numerator (column time increases much more with respect to the row major time)
+
+##analysis: the row major  fetches 16 16 integers at a single time out of which only a single one time is from main memory 
+##and the remaining cache are cache hits and not cache misses
+

@@ -19,6 +19,18 @@ plt.grid(True)
 
 plt.savefig("plots/stage1.png", dpi=150)
 
+plt.figure()
+ratio = col["median_ms"].values / row["median_ms"].values
+
+plt.plot(row["n"].values, ratio, marker="o", color="red")
+plt.xscale("log")
+plt.xlabel("Matrix size N (N x N ints)")
+plt.ylabel("Column time / row time")
+plt.title("How much slower is column-major?")
+plt.axhline(1, linestyle="--", color="gray")
+plt.grid(True)
+plt.savefig("plots/stage1_ratio.png", dpi=150)
+
 
 
 
