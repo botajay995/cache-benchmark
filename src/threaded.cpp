@@ -10,6 +10,28 @@ std::vector<double> median(std::vector<double> nums){
 	
 	return {nums[0],res,nums[nums.size()-1]};
 }
+long long row_rows(const std::vector<int>& a,size_t n,size_t T){
+	std::vector<long long> partial(T,0);
+        std::vector<std::thread> threads;
+        for(size_t t=0;t<T;t++){
+                size_t base=n/T;
+                size_t extra=n%T;
+                size_t start=t*base+std::min(t,extra);
+                size_t end=start+base+(t < extra ? 1 :0);
+                threads.emplace_back(worker, std::ref(a), n, start, end, std::ref(partial[t]));
+
+        }
+        for(auto& th:threads){
+                th.join();
+        }
+        long long total=0;
+        for(auto parsum:partial){
+                total+=parsum;
+        }
+        
+	return total;
+}
+
 void worker(const std::vector<int>& a,size_t n,size_t start,size_t end,long long& out){
 	long long sum=0;
 	for(size_t i=start;i<end;i++){
@@ -21,11 +43,12 @@ void worker(const std::vector<int>& a,size_t n,size_t start,size_t end,long long
 	out=sum;
 }
 int main(int argc, char* argv[]){
-	if(argc < 2) {
-		std::cerr << "Usage: ./traversal <N>\n";
+	if(argc < 3) {
+		std::cerr << "Usage: ./traversal <N><T>\n";
 		return 1;
 	}
 	size_t n = std::strtoul(argv[1], nullptr, 10);		
+	size_t T = std::strtoul(argv[2], nullptr, 10);
 	std::vector<int> a(n*n);
 	for(size_t i=0;i<n*n;i++){
 		a[i]=i%100;
@@ -78,24 +101,7 @@ int main(int argc, char* argv[]){
 	std::cout<<n<<","<<"row,"<<row_val[1]<<"\n";
 	std::cout<<n<<","<<"col,"<<col_val[1]<<"\n";
 
-	size_t T=10;
-	std::vector<long long> partial(T,0);
-	std::vector<std::thread> threads;
-	for(size_t t=0;t<T;t++){
-		size_t base=n/T;
-		size_t extra=n%T;
-		size_t start=t*base+std::min(t,extra);
-		size_t end=start+base+(t < extra ? 1 :0);
-		threads.emplace_back(worker, std::ref(a), n, start, end, std::ref(partial[t]));
-		
-	}
-	for(auto& th:threads){
-		th.join();
-	}
-	long long total=0;
-	for(auto parsum:partial){
-		total+=parsum;
-	}
+	long long total=row_sum(a,n,T);
 	std::cout<<"total= "<<total<<"\n";
 	return 0;
 }
