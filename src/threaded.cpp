@@ -100,8 +100,22 @@ int main(int argc, char* argv[]){
 	std::cerr<<row_sink<<" "<<col_sink<<"\n";
 	std::cout<<n<<","<<"row,"<<row_val[1]<<"\n";
 	std::cout<<n<<","<<"col,"<<col_val[1]<<"\n";
-
+	
 	long long total=row_sum(a,n,T);
-	std::cout<<"total= "<<total<<"\n";
+	long long sink=0;
+	sink+=total;
+	std::vector<double> ttime(reps);
+	for(int i=0;i<reps;i++){
+		auto t3=std::chrono::high_resolution_clock::now();
+		long long rowtime=row_sum(a,n,T);
+		auto t4=std::chrono::high_resolution_clock::now();
+		double col_ms = std::chrono::duration<double, std::milli>(t4-t3).count();
+		ttime[i]=col_ms;
+		sink+=total;
+	}
+	std::vector<double> medtime=median(ttime);
+	std::cerr<<sink<<"\n";
+	std::cout<<n<<T<<medtime[1]<<"\n";
+	
 	return 0;
 }
