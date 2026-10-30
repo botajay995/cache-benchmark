@@ -10,6 +10,16 @@ std::vector<double> median(std::vector<double> nums){
 	
 	return {nums[0],res,nums[nums.size()-1]};
 }
+void worker(const std::vector<int>& a,size_t n,size_t start,size_t end,long long& out){
+        long long sum=0;
+        for(size_t i=start;i<end;i++){
+                for(size_t j=0;j<n;j++){
+                        sum+=a[i*n+j];
+                }
+        }
+
+        out=sum;
+}
 long long row_rows(const std::vector<int>& a,size_t n,size_t T){
 	std::vector<long long> partial(T,0);
         std::vector<std::thread> threads;
@@ -32,16 +42,6 @@ long long row_rows(const std::vector<int>& a,size_t n,size_t T){
 	return total;
 }
 
-void worker(const std::vector<int>& a,size_t n,size_t start,size_t end,long long& out){
-	long long sum=0;
-	for(size_t i=start;i<end;i++){
-		for(size_t j=0;j<n;j++){
-			sum+=a[i*n+j];
-		}
-	}
-	
-	out=sum;
-}
 int main(int argc, char* argv[]){
 	if(argc < 3) {
 		std::cerr << "Usage: ./traversal <N><T>\n";
@@ -60,54 +60,14 @@ int main(int argc, char* argv[]){
 		}
 	}
 	int reps=7;
-	std::vector<double> row;
-	std::vector<double> col;
-	long long row_sink=0;
-	//for row major we will first time it rep times
-	int tempr=reps;
-	while(tempr--){
-		auto t1=std::chrono::high_resolution_clock::now();
-		long long row_sum=0;
-		for(size_t i=0;i<n;i++){
-			for(size_t j=0;j<n;j++){
-				row_sum+=a[i*n+j];
-			}
-		}
-		auto t2=std::chrono::high_resolution_clock::now();
-		row_sink+=row_sum;
-		double row_ms = std::chrono::duration<double, std::milli>(t2-t1).count();
-		row.push_back(row_ms);
-
-	}
-	int tempc=reps;
-	long long col_sink=0;
-	while(tempc--){
-		auto t3=std::chrono::high_resolution_clock::now();
-		long long col_sum=0;
-		for(size_t i=0;i<n;i++){
-			for(size_t j=0;j<n;j++){
-				col_sum+=a[j*n+i];
-			}
-		}
-		auto t4=std::chrono::high_resolution_clock::now();
-		col_sink+=col_sum;
-		double col_ms = std::chrono::duration<double, std::milli>(t4-t3).count();
-		col.push_back(col_ms);
-	}
-	std::vector<double> row_val=median(row);
-	std::vector<double> col_val=median(col);
 	
-	std::cerr<<row_sink<<" "<<col_sink<<"\n";
-	std::cout<<n<<","<<"row,"<<row_val[1]<<"\n";
-	std::cout<<n<<","<<"col,"<<col_val[1]<<"\n";
-	
-	long long total=row_sum(a,n,T);
+	long long total=run_rows(a,n,T);
 	long long sink=0;
 	sink+=total;
 	std::vector<double> ttime(reps);
 	for(int i=0;i<reps;i++){
 		auto t3=std::chrono::high_resolution_clock::now();
-		long long rowtime=row_sum(a,n,T);
+		long long rowtime=run_rows(a,n,T);
 		auto t4=std::chrono::high_resolution_clock::now();
 		double col_ms = std::chrono::duration<double, std::milli>(t4-t3).count();
 		ttime[i]=col_ms;
@@ -115,7 +75,7 @@ int main(int argc, char* argv[]){
 	}
 	std::vector<double> medtime=median(ttime);
 	std::cerr<<sink<<"\n";
-	std::cout<<n<<T<<medtime[1]<<"\n";
+	std::cout<<n<<","<<T<<","<<medtime[1]<<"\n";
 	
 	return 0;
 }
