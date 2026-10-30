@@ -20,7 +20,7 @@ void worker(const std::vector<int>& a,size_t n,size_t start,size_t end,long long
 
         out=sum;
 }
-long long row_rows(const std::vector<int>& a,size_t n,size_t T){
+long long run_rows(const std::vector<int>& a,size_t n,size_t T){
 	std::vector<long long> partial(T,0);
         std::vector<std::thread> threads;
         for(size_t t=0;t<T;t++){
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]){
 		auto t4=std::chrono::high_resolution_clock::now();
 		double col_ms = std::chrono::duration<double, std::milli>(t4-t3).count();
 		ttime[i]=col_ms;
-		sink+=total;
+		sink+=rowtime;
 	}
 	std::vector<double> medtime=median(ttime);
 	std::cerr<<sink<<"\n";
