@@ -17,3 +17,7 @@ start=t*base+min(t,extra)
 where:t=number of threads
 base:total number of rows/number of threads
 
+RESULTS:We expected a near linear speedup for the row major traversal but according to the results what we notice is that at a lower N we are bounded by the
+time it takes to distribute the work and synchronization
+but for the larger N it is bounded by the memory bandwidth of the ram(the weight the bus can carry basically)
+
