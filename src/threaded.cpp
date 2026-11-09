@@ -10,17 +10,17 @@ std::vector<double> median(std::vector<double> nums){
 	
 	return {nums[0],res,nums[nums.size()-1]};
 }
-void worker(const std::vector<int>& a,size_t n,size_t start,size_t end,long long& out){
+void workercol(const std::vector<int>& a,size_t n,size_t start,size_t end,long long& out){
         long long sum=0;
-        for(size_t i=start;i<end;i++){
-                for(size_t j=0;j<n;j++){
+        for(size_t j=start;j<end;j++){
+                for(size_t i=0;i<n;i++){
                         sum+=a[i*n+j];
                 }
         }
 
         out=sum;
 }
-long long run_rows(const std::vector<int>& a,size_t n,size_t T){
+long long run_cols(const std::vector<int>& a,size_t n,size_t T){
 	std::vector<long long> partial(T,0);
         std::vector<std::thread> threads;
         for(size_t t=0;t<T;t++){
@@ -28,7 +28,7 @@ long long run_rows(const std::vector<int>& a,size_t n,size_t T){
                 size_t extra=n%T;
                 size_t start=t*base+std::min(t,extra);
                 size_t end=start+base+(t < extra ? 1 :0);
-                threads.emplace_back(worker, std::ref(a), n, start, end, std::ref(partial[t]));
+                threads.emplace_back(workercol, std::ref(a), n, start, end, std::ref(partial[t]));
 
         }
         for(auto& th:threads){
@@ -61,13 +61,13 @@ int main(int argc, char* argv[]){
 	}
 	int reps=7;
 	
-	long long total=run_rows(a,n,T);
+	long long total=run_cols(a,n,T);
 	long long sink=0;
 	sink+=total;
 	std::vector<double> ttime(reps);
 	for(int i=0;i<reps;i++){
 		auto t3=std::chrono::high_resolution_clock::now();
-		long long rowtime=run_rows(a,n,T);
+		long long rowtime=run_cols(a,n,T);
 		auto t4=std::chrono::high_resolution_clock::now();
 		double col_ms = std::chrono::duration<double, std::milli>(t4-t3).count();
 		ttime[i]=col_ms;
